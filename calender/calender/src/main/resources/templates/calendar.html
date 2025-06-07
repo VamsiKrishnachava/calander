@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Calendarific Holidays - Monthly View</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; background: #f7f9fa; }
+        h2, h3, h4 { color: #222; margin-bottom: 10px; }
+        h2 { font-size: 2.2em; margin-top: 0; text-align: center; }
+        h3 { font-size: 1.3em; margin-top: 30px; text-align: center; }
+        h4 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px; letter-spacing: 1px; text-align: center; }
+        .view-switch { margin-bottom: 30px; }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 160px;
+        }
+        form { background: #fff; padding: 18px 22px 14px 22px; border-radius: 8px; box-shadow: 0 2px 8px #e0e0e0; margin-bottom: 30px; display: inline-block; }
+        label { font-weight: 500; color: #333; margin-bottom: 4px; }
+        select, button { margin-top: 4px; margin-bottom: 0; padding: 6px 10px; border-radius: 4px; border: 1px solid #bbb; font-size: 1em; }
+        button { background: #1976d2; color: #fff; border: none; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #125ea8; }
+        table { border-collapse: collapse; margin-bottom: 40px; width: 100%; background: #fff; box-shadow: 0 2px 8px #e0e0e0; border-radius: 8px; overflow: hidden; }
+        th, td {
+            border: 1px solid #e0e0e0;
+            width: 14.28%;
+            height: 100px;
+            vertical-align: top;
+            padding: 5px;
+            position: relative;
+        }
+        th { background-color: #f4f4f4; }
+        .light-green { background-color: #ccffcc !important; }
+        .dark-green { background-color: #66cc66 !important; color: white; }
+        .outside-month { color: #999; }
+        .date-number { font-weight: bold; }
+        .holiday-name { font-size: 11px; display: block; color: darkred; margin-top: 4px; }
+        @media (max-width: 900px) {
+            th, td { height: 50px; font-size: 0.95em; }
+            .form-row { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Holiday Calendar - Monthly View</h2>
+
+<div class="view-switch">
+    <form method="get" action="/quarter">
+        <button type="submit">Switch to Quarter View</button>
+    </form>
+</div>
+
+<form method="post" action="/show">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Country:</label>
+            <select name="country" required>
+                <option value="" disabled selected>-- Select Country --</option>
+                <option th:each="c : ${countries}"
+                        th:value="${c.iso3166}"
+                        th:text="${c.country_name}"
+                        th:selected="${country != null and c.iso3166 == country}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Year:</label>
+            <select name="year" required>
+                <option value="" disabled selected>-- Select Year --</option>
+                <option th:each="y : ${years}" th:value="${y}" th:text="${y}" th:selected="${year == y}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Month:</label>
+            <select name="month">
+                <option value="" disabled selected>-- Select Month --</option>
+                <option th:each="m : ${months}" th:value="${m}" th:text="${m}" th:selected="${month == m}"></option>
+            </select>
+        </div>
+        <div class="form-group" style="min-width:100px;">
+            <button type="submit" style="width:100%;margin-top:24px;">Get Holidays</button>
+        </div>
+    </div>
+    <input type="hidden" name="view" value="month" />
+</form>
+
+<div th:if="${weeks != null}">
+    <h3 th:text="'Calendar for ' + ${country} + ' - ' + ${year} + '-' + ${month}"></h3>
+    
+    <table>
+        <thead>
+        <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="week, weekStat : ${weeks}" 
+            th:class="${weekCssClassMap['week_' + weekStat.index]}">
+            <td th:each="day : ${week}">
+                <div th:text="${day.dayOfMonth}" th:class="${day.monthValue} != ${month} ? 'outside-month' : 'date-number'"></div>
+                <div th:if="${holidays.containsKey(day.toString())}">
+                    <span th:each="h : ${holidays[day.toString()]}" th:text="${h.name}" class="holiday-name"></span>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
