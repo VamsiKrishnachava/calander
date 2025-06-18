@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     public String handleException(Exception ex, Model model) {
         model.addAttribute("message", ex.getMessage());
         model.addAttribute("stackTrace", ex.getStackTrace());
-        return "error"; // a Thymeleaf error.html page
+        return "error"; 
     }
     
 }

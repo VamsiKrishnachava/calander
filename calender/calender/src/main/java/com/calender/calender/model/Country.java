@@ -11,8 +11,7 @@ public class Country {
 
     @JsonProperty("country_name")
     private String country_name;
-
-    
+      
 }
 
 

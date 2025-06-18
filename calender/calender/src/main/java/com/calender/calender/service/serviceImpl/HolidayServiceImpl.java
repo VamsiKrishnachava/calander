@@ -2,6 +2,7 @@ package com.calender.calender.service.serviceImpl;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +28,8 @@ public class HolidayServiceImpl implements HolidayService{
     
     public List<Country> getSupportedCountries() {
         String url = "https://calendarific.com/api/v2/countries?api_key=" + apiKey;
-        CountryResponse response = restTemplate.getForObject(url, CountryResponse.class);
-        return response.getResponse().getCountries();
+        Optional<CountryResponse> response = Optional.ofNullable(restTemplate.getForObject(url, CountryResponse.class));
+        return response.get().getResponse().getCountries();
     }
 
     public List<Holiday> getHolidays(String countryCode, int year) {
@@ -39,6 +40,7 @@ public class HolidayServiceImpl implements HolidayService{
                 + "&type=national"; 
 
         HolidayResponse response = restTemplate.getForObject(url, HolidayResponse.class);
+        
         return response.getResponse().getHolidays();
     }
 

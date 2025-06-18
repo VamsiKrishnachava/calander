@@ -17,11 +17,15 @@ public class CalendarController {
     @Autowired
     private HolidayService holidayService;
 
+    private List<Integer> years = List.of(2024, 2025, 2026), months = List.of(1,2,3,4,5,6,7,8,9,10,11,12);
+
+    
+
     @GetMapping("/")
     public String showMonthlyForm(Model model) {
         model.addAttribute("countries", holidayService.getSupportedCountries());
-        model.addAttribute("years", List.of(2024, 2025, 2026));
-        model.addAttribute("months", List.of(1,2,3,4,5,6,7,8,9,10,11,12));
+        model.addAttribute("years", years);
+        model.addAttribute("months", months);
         return "calendar";
     }
 
@@ -40,6 +44,7 @@ public class CalendarController {
 
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate start = yearMonth.atDay(1);
+
         while (start.getDayOfWeek().getValue() != 7) {
             start = start.minusDays(1);
         }
@@ -79,8 +84,8 @@ public class CalendarController {
         model.addAttribute("month", month);
         model.addAttribute("country", country);
         model.addAttribute("countries", holidayService.getSupportedCountries());
-        model.addAttribute("years", List.of(2024, 2025, 2026));
-        model.addAttribute("months", List.of(1,2,3,4,5,6,7,8,9,10,11,12));
+        model.addAttribute("years", years);
+        model.addAttribute("months", months);
         return "calendar";
     }
 
@@ -149,7 +154,7 @@ public class CalendarController {
         model.addAttribute("quarterWeeks", quarterWeeks);
         model.addAttribute("weekCssClassMap", weekCssClassMap);
         model.addAttribute("countries", holidayService.getSupportedCountries());
-        model.addAttribute("years", List.of(2024, 2025, 2026));
+        model.addAttribute("years", years);
         return "quarter";
     }
 }
